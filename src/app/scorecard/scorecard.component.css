@@ -1,0 +1,9 @@
+li {
+  list-style: none;
+  height: 25px;
+}
+
+.card-lists {
+  display: flex;
+  flex-direction: row;
+}
