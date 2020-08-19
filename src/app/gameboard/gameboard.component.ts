@@ -9,7 +9,7 @@ import { State } from "../model/State.model"
 })
 export class GameboardComponent implements OnInit {
 
-  @Output() selected = new EventEmitter<[number, number]>();
+  @Output() selected = new EventEmitter<any>();
   @Input() state: State = new State();
 
   constructor() { }
@@ -30,7 +30,7 @@ export class GameboardComponent implements OnInit {
   }
 
   registerClick(row: number, column: number) {
-    this.selected.emit([row, column]);
+    this.selected.emit({ row: row, column: column });
   }
 
 

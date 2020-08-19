@@ -1,15 +1,18 @@
-<h2>{{teamNames[team]}}</h2>
-<div class='card-lists'>
-  <ul>
-    <li *ngFor='let row of rows'>
-      {{row%2==(team)? 'MULTIPLE: ' : 'FACTORS: '}}
-    </li>
-    <li>Total</li>
-  </ul>
-  <ul>
-    <li *ngFor='let row of rows'>
-      <input id='{{team}}-{{row}}' type='text'>
-    </li>
-    <li>Total</li>
-  </ul>
+<div [className]="['container' + team]">
+  <h2>{{teamNames[team]}}</h2>
+  <div class='card-lists'>
+    <ul>
+      <li *ngFor='let row of rows'>
+        {{row%2==(team)? 'MULTIPLE: ' : 'FACTORS: '}}
+      </li>
+      <li>Total</li>
+    </ul>
+    <ul>
+      <li *ngFor='let row of rows' class="values">
+        <span id='{{team}}-{{row}}' type='text'></span>
+        <div class="underline"></div>
+      </li>
+      <li id='total-{{team}}'></li>
+    </ul>
+  </div>
 </div>

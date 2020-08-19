@@ -47,4 +47,17 @@ export class AppComponent implements OnInit {
       console.log('game already started');
     }
   }
+
+  startGame() {
+    this.socket.emit('start-game');
+  }
+
+  selected(coordinate) {
+    this.socket.emit('board-selection', coordinate);
+  }
+
+  choseFactors() {
+    console.log('trying to chose fact')
+    this.socket.emit('chose-factors');
+  }
 }

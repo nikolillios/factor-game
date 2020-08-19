@@ -5,8 +5,10 @@
 </form>
 <div *ngIf='joined'>
   <div class='flex-container'>
-    <scorecard [team]='0'></scorecard>
-    <gameboard [(state)]='state'></gameboard>
-    <scorecard [team]='1'></scorecard>
+    <scorecard [(state)]='state' [team]='0'></scorecard>
+    <gameboard [(state)]='state' (selected)="selected($event)"></gameboard>
+    <scorecard [(state)]='state' [team]='1'></scorecard>
   </div>
+  <button (click)="choseFactors()">Done Choosing Factors</button>
+  <button *ngIf="!gameStarted" (click)="startGame()">Start Game</button>
 </div>

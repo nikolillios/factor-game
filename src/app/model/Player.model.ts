@@ -3,6 +3,8 @@ export class Player {
   color: string;
   name: string;
   isCurrPlayer: boolean;
+  isSelectingMultiple: boolean;
+  turns: Array<Array<number>>;
 
   constructor(id: string, color: string) {
     this.id = id;
