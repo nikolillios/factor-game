@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
 
   private socket: any;
   public joinForm;
-  public joined = false;
+  public joined = true;
   public state: State = new State();
   constructor(private formBuilder: FormBuilder) {
     this.joinForm = this.formBuilder.group({
