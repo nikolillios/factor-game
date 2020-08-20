@@ -1,5 +1,6 @@
 <div [className]="['container' + team]">
   <h2>{{teamNames[team]}}</h2>
+  <h3>{{state.players[team] ? state.players[team].name : ' '}}</h3>
   <div class='card-lists'>
     <ul>
       <li *ngFor='let row of rows'>

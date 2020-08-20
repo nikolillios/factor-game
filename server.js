@@ -73,6 +73,7 @@ function setListeners(socket) {
     startGame();
   });
   socket.on('play-again', () => {
+    if (state.gameStarted) { return; }
     console.log('players: ' + JSON.stringify(resetPlayers(state.players)))
     console.log('tiles: ' + JSON.stringify(initTiles()))
     let newState = {
