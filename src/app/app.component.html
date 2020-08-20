@@ -10,5 +10,6 @@
     <scorecard [(state)]='state' [team]='1'></scorecard>
   </div>
   <button (click)="choseFactors()">Done Choosing Factors</button>
-  <button *ngIf="!gameStarted" (click)="startGame()">Start Game</button>
+  <button [disabled]="gameStarted" (click)="startGame()">Start Game</button>
+  <button [disabled]="false" (click)="playAgain()">Play Again</button>
 </div>

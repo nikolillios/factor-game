@@ -28,6 +28,8 @@ export class ScorecardComponent implements OnInit {
 
   updateCard() {
     let player = this.state.players[this.team];
+    if (player == undefined) { return }
+    if (player.turns.length == 0) { this.clearCard() }
     if (player == undefined || player.turns == undefined) { return; }
     for (let i = 0; i < player.turns.length; i++) {
       let elem: Element = <HTMLElement>document.getElementById(`${this.team}-${i}`);
@@ -36,6 +38,13 @@ export class ScorecardComponent implements OnInit {
     let total: Element = <HTMLElement>document.getElementById(`total-${this.team}`);
     if (total != null) {
       total.textContent = this.sum(this.flatten(player.turns)).toString();
+    }
+  }
+
+  clearCard() {
+    for (let i of this.rows) {
+      let elem: Element = <HTMLElement>document.getElementById(`${this.team}-${i}`);
+      if (elem != undefined) { elem.textContent = ''; }
     }
   }
 

@@ -4,6 +4,7 @@ const path = require('path');
 const { setMaxListeners } = require('process');
 const { get } = require('http');
 const { stat } = require('fs');
+const { start } = require('repl');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
@@ -39,7 +40,7 @@ function initTiles() {
 }
 
 function tile(value) {
-  return { value: value, color: 'none', marked: false };
+  return { value: value, color: 'transparent', marked: false };
 }
 
 game.on('connection', socket => {
@@ -69,11 +70,20 @@ function setListeners(socket) {
   });
   //start game
   socket.on('start-game', data => {
-    if (state.players.length <= 1) { return; }
-    let player = state.players[0];
-    player.isCurrPlayer = true;
-    player.isSelectingMultiple = true;
-    state.gameStarted = true;
+    startGame();
+  });
+  socket.on('play-again', () => {
+    console.log('players: ' + JSON.stringify(resetPlayers(state.players)))
+    console.log('tiles: ' + JSON.stringify(initTiles()))
+    let newState = {
+      tiles: initTiles(),
+      players: resetPlayers(state.players),
+      gameStarted: true,
+      message: '',
+      turn: 0
+    };
+    state = newState;
+    startGame();
     game.emit('update', state);
   });
   //board-selection
@@ -120,6 +130,25 @@ function setListeners(socket) {
     }
     game.emit('update', state);
   });
+}
+
+function startGame() {
+  if (state.players.length <= 1) { return; }
+  let player = state.players[0];
+  player.isCurrPlayer = true;
+  player.isSelectingMultiple = true;
+  state.gameStarted = true;
+  game.emit('update', state);
+}
+
+function resetPlayers(players) {
+  for (let i = 0; i < players.length; i++) {
+    let player = players[i];
+    player.turns = [];
+    player.isCurrPlayer = false;
+    player.isSelectingMultiple = false;
+  }
+  return players
 }
 
 function isProperFactor(value) {

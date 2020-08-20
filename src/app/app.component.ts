@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
 
   private socket: any;
   public joinForm;
-  public joined = true;
+  public joined = false;
   public state: State = new State();
   constructor(private formBuilder: FormBuilder) {
     this.joinForm = this.formBuilder.group({
@@ -50,6 +50,10 @@ export class AppComponent implements OnInit {
 
   startGame() {
     this.socket.emit('start-game');
+  }
+
+  playAgain() {
+    this.socket.emit('play-again');
   }
 
   selected(coordinate) {

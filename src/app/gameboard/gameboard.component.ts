@@ -20,6 +20,10 @@ export class GameboardComponent implements OnInit {
   ngAfterViewInit() {
   }
 
+  ngOnChanges() {
+    console.log('gameboard state; ' + this.state.tiles)
+  }
+
   getPlayerWithId(id) {
     for (let i = 0; i < this.state.players.length; i++) {
       if (this.state.players[i].id == id) {
