@@ -21,7 +21,7 @@ export class GameboardComponent implements OnInit {
   }
 
   ngOnChanges() {
-    console.log('gameboard state; ' + this.state.tiles)
+    console.log('gameboard state; ' + JSON.stringify(this.state.tiles));
   }
 
   getPlayerWithId(id) {

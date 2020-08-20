@@ -1,6 +1,6 @@
 <div [className]="['container' + team]">
   <h2>{{teamNames[team]}}</h2>
-  <h3>{{state.players[team] ? state.players[team].name : ' '}}</h3>
+  <h3>{{state.players[team] ? state.players[team].name : ''}}: {{score}}</h3>
   <div class='card-lists'>
     <ul>
       <li *ngFor='let row of rows'>
@@ -13,7 +13,8 @@
         <span id='{{team}}-{{row}}' type='text'></span>
         <div class="underline"></div>
       </li>
-      <li id='total-{{team}}'></li>
+      <li *ngIf='state.players[team] != undefined'>{{state.players[team] != undefined ? state.players[team].score : 0}}
+      </li>
     </ul>
   </div>
 </div>

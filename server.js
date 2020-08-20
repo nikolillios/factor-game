@@ -1,10 +1,6 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const { setMaxListeners } = require('process');
-const { get } = require('http');
-const { stat } = require('fs');
-const { start } = require('repl');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
@@ -25,7 +21,8 @@ var state = {
   players: [],
   gameStarted: false,
   message: '',
-  turn: 0
+  turn: 0,
+  score: [0, 0]
 }
 
 function initTiles() {
@@ -59,7 +56,8 @@ function setListeners(socket) {
         color: getColor(),
         isCurrPlayer: false,
         isSelectingMultiple: false,
-        turns: []
+        turns: [],
+        score: 0
       });
       socket.emit('join-success', state);
       game.emit('update', state);
@@ -74,14 +72,13 @@ function setListeners(socket) {
   });
   socket.on('play-again', () => {
     if (state.gameStarted) { return; }
-    console.log('players: ' + JSON.stringify(resetPlayers(state.players)))
-    console.log('tiles: ' + JSON.stringify(initTiles()))
     let newState = {
       tiles: initTiles(),
       players: resetPlayers(state.players),
       gameStarted: true,
       message: '',
-      turn: 0
+      turn: 0,
+      score: state.score
     };
     state = newState;
     startGame();
@@ -89,6 +86,7 @@ function setListeners(socket) {
   });
   //board-selection
   socket.on('board-selection', coordinate => {
+    if (!state.gameStarted) { return }
     let tile = state.tiles[coordinate.row][coordinate.column];
     let curr = currPlayer();
     if (isCurrPlayer(socket.id) && !tile.marked) {
@@ -96,14 +94,17 @@ function setListeners(socket) {
         curr.turns.push([]);
         curr.turns[state.turn].push(tile.value);
         tile.marked = true; // mark tile
+        curr.score +=
+          hasProperFactorsRemaining(tile.value, state) ? tile.value : 0;
         setNextCurrPlayer(getPlayerWithId(socket.id));
         currPlayer().isSelectingMultiple = false;
         currPlayer().turns.push([]);
         tile.color = getPlayerWithId(socket.id).color;
-      } else if (isProperFactor(tile.value)) {
+      } else if (isProperFactor(tile.value, lastMultiple(state))) {
         curr.turns[state.turn].push(tile.value);
         tile.marked = true; // mark tile
         tile.color = getPlayerWithId(socket.id).color;
+        curr.score += tile.value;
       }
     } else {
       socket.emit('message', "error with board selection");
@@ -113,6 +114,16 @@ function setListeners(socket) {
   //chose-factors
   socket.on('chose-factors', () => {
     if (isCurrPlayer(socket.id) && !currPlayer().isSelectingMultiple) {
+      if (isGameOver(state)) {
+        state.gameStarted = false;
+        let p0 = state.players[0], p1 = state.players[1];
+        let diff = p0.score - p1.score;
+        if (diff < 0) {
+          state.score[1] += 1;
+        } else if (diff > 0) {
+          state.score[0] += 1;
+        }
+      }
       currPlayer().isSelectingMultiple = true;
       state.turn++;
       socket.emit('update', state);
@@ -131,6 +142,30 @@ function setListeners(socket) {
     }
     game.emit('update', state);
   });
+}
+
+function isGameOver(state) {
+  for (let i = 0; i < state.tiles.length; i++) {
+    for (let j = 0; j < state.tiles[0].length; j++) {
+      let tile = state.tiles[i][j];
+      if (hasProperFactorsRemaining(tile.value, state) &&
+        !tile.marked) { console.log('coord: ' + i + ', ' + j); return false; }
+    }
+  }
+  return true;
+}
+
+function hasProperFactorsRemaining(multiple, state) {
+  let tiles = state.tiles;
+  for (let i = 0; i < tiles.length; i++) {
+    for (let j = 0; j < tiles[0].length; j++) {
+      let tile = tiles[i][j];
+      if (isProperFactor(tile.value, multiple) && !tile.marked) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 function startGame() {
@@ -152,16 +187,24 @@ function resetPlayers(players) {
   return players
 }
 
-function isProperFactor(value) {
-  if (value == 1) { return }
+function isProperFactor(value, multiple) {
+  if (value == 1 || value == multiple) { return false }
+  return (multiple % value == 0);
+}
+
+function lastPlayer(state) {
   let lastPlayer;
   for (let i = 0; i < state.players.length; i++) {
     if (!state.players[i].isCurrPlayer) {
       lastPlayer = state.players[i];
     }
   }
-  let multiple = lastPlayer.turns[state.turn][0];
-  return (multiple % value == 0);
+  return lastPlayer;
+}
+
+function lastMultiple(state) {
+  let last = lastPlayer(state);
+  return last == undefined ? undefined : last.turns[state.turn][0];
 }
 
 function getPlayerWithId(id) {

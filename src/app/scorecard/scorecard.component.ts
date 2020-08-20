@@ -13,7 +13,7 @@ export class ScorecardComponent implements OnInit {
   @Input() state: State;
   color = 'red';
   public teamNames = ['Red Team', 'Yellow Team'];
-  public rows = Array.from(new Array<number>(16).keys())
+  public rows = Array.from(new Array<number>(26).keys())
   constructor() { }
 
   ngOnInit(): void {
@@ -35,10 +35,10 @@ export class ScorecardComponent implements OnInit {
       let elem: Element = <HTMLElement>document.getElementById(`${this.team}-${i}`);
       elem.textContent = player.turns[i].toString();
     }
-    let total: Element = <HTMLElement>document.getElementById(`total-${this.team}`);
-    if (total != null) {
-      total.textContent = this.sum(this.flatten(player.turns)).toString();
-    }
+    // let total: Element = <HTMLElement>document.getElementById(`total-${this.team}`);
+    // if (total != null) {
+    //   total.textContent = this.sum(this.flatten(player.turns)).toString();
+    // }
   }
 
   clearCard() {
