@@ -126,7 +126,7 @@ function setListeners(socket) {
       }
       currPlayer().isSelectingMultiple = true;
       state.turn++;
-      socket.emit('update', state);
+      game.emit('update', state);
     }
   })
   // handle socket disconnect 
@@ -149,7 +149,7 @@ function isGameOver(state) {
     for (let j = 0; j < state.tiles[0].length; j++) {
       let tile = state.tiles[i][j];
       if (hasProperFactorsRemaining(tile.value, state) &&
-        !tile.marked) { console.log('coord: ' + i + ', ' + j); return false; }
+        !tile.marked) { return false; }
     }
   }
   return true;
