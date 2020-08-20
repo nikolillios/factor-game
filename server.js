@@ -131,7 +131,6 @@ function isProperFactor(value) {
     }
   }
   let multiple = lastPlayer.turns[state.turn][0];
-  console.log(multiple, value, multiple % value == 0);
   return (multiple % value == 0);
 }
 
