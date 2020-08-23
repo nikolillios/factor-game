@@ -23,15 +23,6 @@ export class GameboardComponent implements OnInit {
   ngOnChanges() {
   }
 
-  getPlayerWithId(id) {
-    for (let i = 0; i < this.state.players.length; i++) {
-      if (this.state.players[i].id == id) {
-        return this.state.players[i];
-      }
-    }
-    throw new Error('no such player');
-  }
-
   registerClick(row: number, column: number) {
     this.selected.emit({ row: row, column: column });
   }
